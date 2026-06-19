@@ -150,31 +150,43 @@ const Sub_Bytes = ((block) => {
 
 //Shift Rows
 const Shift_rows = ((block) => {
-    let matrix = [];
-    for (let i = 0; i < 16; i += 4) {
-        matrix.push(block.slice(i, i + 4));
-    }
 
-    // console.log(matrix);
+    let matrix =
+        [[block[0], block[4], block[8], block[12]],
+        [block[1], block[5], block[9], block[13]],
+        [block[2], block[6], block[10], block[14]],
+        [block[3], block[7], block[11], block[15]]
+        ];
+
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < i; j++) {
+            matrix[i].push(matrix[i].shift());
+        }
+    }
     return matrix;
 });
-// Shift_rows();
+
+//Mix columns
+const Mix_Columns = (() => {
+
+
+});
 
 const AES = (() => {
     const plaintext = PKCS_7();
     let currentBlock;
-    //Passing the Plain Text to Substitution Bytes
+
+    //four transformations
     for (let i = 0; i < plaintext.length; i += 16) {
+
         currentBlock = plaintext.slice(i, i + 16);
+
         currentBlock = Sub_Bytes(currentBlock);
         console.log(currentBlock);
 
         currentBlock = Shift_rows(currentBlock);
-        // Shift_rows();
         console.log(currentBlock);
-
     }
-
 });
 
 AES();
