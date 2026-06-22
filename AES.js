@@ -166,11 +166,57 @@ const Shift_rows = ((block) => {
     return matrix;
 });
 
+
 //Mix columns
-const Mix_Columns = (() => {
-
-
+const mul02 = ((b) => {
+    let shifted = (b << 1) & 0xFF;
+    return (b & 0x80) ? (shifted ^ 0x1B) : shifted;
 });
+
+const mul03 = ((b) => {
+    return mul02(b) ^ b;
+});
+
+const mixSingleColumn = ((col) => {
+
+    let s0 = col[0], s1 = col[1], s2 = col[2], s3 = col[3];
+
+    let t0 = mul02(s0) ^ mul03(s1) ^ s2 ^ s3;
+    let t1 = s0 ^ mul02(s1) ^ mul03(s2) ^ s3;
+    let t2 = s0 ^ s1 ^ mul02(s2) ^ mul03(s3);
+    let t3 = mul03(s0) ^ s1 ^ s2 ^ mul02(s3);
+
+    return [t0, t1, t2, t3];
+});
+
+const Mix_Columns = ((State_Matrix) => {
+    const constant_Matrix = [
+        [2, 3, 1, 1],
+        [1, 2, 3, 1],
+        [1, 1, 2, 3],
+        [3, 1, 1, 2]
+    ];
+
+    let new_Matrix = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]
+    ];
+
+    for (let i = 0; i < 4; i++) {
+        let column = [State_Matrix[0][i], State_Matrix[1][i], State_Matrix[2][i], State_Matrix[3][i]];
+        let mixed = mixSingleColumn(column);
+
+        new_Matrix[0][i] = mixed[0];
+        new_Matrix[1][i] = mixed[1];
+        new_Matrix[2][i] = mixed[2];
+        new_Matrix[3][i] = mixed[3];
+    }
+    return new_Matrix;
+});
+
+
 
 const AES = (() => {
     const plaintext = PKCS_7();
@@ -185,6 +231,9 @@ const AES = (() => {
         console.log(currentBlock);
 
         currentBlock = Shift_rows(currentBlock);
+        console.log(currentBlock);
+
+        currentBlock = Mix_Columns(currentBlock);
         console.log(currentBlock);
     }
 });
