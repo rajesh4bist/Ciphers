@@ -66,24 +66,24 @@ const keyExpansion = (() => {
 
         let result = gFunction(word_3, i);
 
-        for (let i = 0; i < 4; i++) {
-            let byte = result[i] ^ word_0[i];
-            word_0[i] = byte;
+        for (let j = 0; j < 4; j++) {
+            let byte = result[j] ^ word_0[j];
+            word_0[j] = byte;
         }
 
-        for (let i = 0; i < 4; i++) {
-            let byte = word_0[i] ^ word_1[i];
-            word_1[i] = byte;
+        for (let j = 0; j < 4; j++) {
+            let byte = word_0[j] ^ word_1[j];
+            word_1[j] = byte;
         }
 
-        for (let i = 0; i < 4; i++) {
-            let byte = word_1[i] ^ word_2[i];
-            word_2[i] = byte;
+        for (let j = 0; j < 4; j++) {
+            let byte = word_1[j] ^ word_2[j];
+            word_2[j] = byte;
         }
 
-        for (let i = 0; i < 4; i++) {
-            let byte = word_2[i] ^ word_3[i];
-            word_3[i] = byte;
+        for (let j = 0; j < 4; j++) {
+            let byte = word_2[j] ^ word_3[j];
+            word_3[j] = byte;
         }
 
         roundKeys.push([Array.from(word_0), Array.from(word_1), Array.from(word_2), Array.from(word_3)]);
@@ -96,7 +96,7 @@ const keyExpansion = (() => {
 //Padding
 const PKCS_7 = (() => {
 
-    let plaintext = "hello world";
+    let plaintext = "hello hello";
     const encoder = new TextEncoder();
     const encoded_Bytes = encoder.encode(plaintext);
 
@@ -109,6 +109,11 @@ const PKCS_7 = (() => {
     }
 
     return byteArray;
+
+    // return [
+    //     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Block 1
+    //     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  // Block 2
+    // ];
 
     // return [
     //     0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d,
@@ -155,6 +160,7 @@ const Shift_rows = ((matrix) => {
 
 //Mix columns
 const mul02 = ((b) => {
+    b = b & 0xFF;
     let shifted = (b << 1) & 0xFF;
     return (b & 0x80) ? (shifted ^ 0x1B) : shifted;
 });
@@ -195,6 +201,7 @@ const Mix_Columns = ((State_Matrix) => {
     return new_Matrix;
 });
 
+
 //Adding Round Keys
 const add_Round_Keys = ((State_Matrix, keys) => {
 
@@ -216,6 +223,8 @@ const add_Round_Keys = ((State_Matrix, keys) => {
 
 const encrypt_block = ((plainblock, roundKeys) => {
     let currentBlock = plainblock;
+
+    //pre-round transformation
     currentBlock = add_Round_Keys(currentBlock, roundKeys[0]);
 
     for (let i = 1; i <= 9; i++) {
@@ -231,6 +240,7 @@ const encrypt_block = ((plainblock, roundKeys) => {
 
     return currentBlock;
 });
+
 
 const flattenMatrix = ((matrix) => {
     let flat = [];
@@ -249,17 +259,28 @@ const AES = (() => {
     let keys = keyExpansion();
     let ciphertext = [];
 
+    let IV = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f];
+    let previousBlock = [...IV];
+
     for (let i = 0; i < plaintext.length; i += 16) {
-        
         currentBlock = plaintext.slice(i, i + 16);
-        let matrixBlock = convertTo2D(currentBlock);
+
+        let chainedBlock = [];
+        for (let j = 0; j < 16; j++) {
+            chainedBlock.push(currentBlock[j] ^ previousBlock[j]);
+        }
+
+        let matrixBlock = convertTo2D(chainedBlock);
 
         let encrypted_block = encrypt_block(matrixBlock, keys);
 
         let flatBlock = flattenMatrix(encrypted_block);
+        previousBlock = [...flatBlock];
         ciphertext.push(...flatBlock);
-        console.log("Final Encrypted Block:", ciphertext);
     }
+    console.log("Final Encrypted Block:", ciphertext);
 });
 
+
 AES();
+
