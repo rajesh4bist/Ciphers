@@ -52,14 +52,7 @@ const gFunction = ((word, round) => {
 });
 
 //Key expansion for AES
-
 const keyExpansion = (() => {
-
-    const Nk = 4;
-    const Nr = 10;
-    const Nb = 4;
-
-    const totalWords = Nb * (Nr + 1)
 
     const word_0 = new Uint8Array([0x2b, 0x7e, 0x15, 0x16]);
     const word_1 = new Uint8Array([0x28, 0xae, 0xd2, 0xa6]);
@@ -67,11 +60,7 @@ const keyExpansion = (() => {
     const word_3 = new Uint8Array([0x09, 0xcf, 0x4f, 0x3c]);
 
     let roundKeys = [];
-
     roundKeys.push([Array.from(word_0), Array.from(word_1), Array.from(word_2), Array.from(word_3)]);
-
-
-    let i = 1;
 
     for (let i = 1; i <= 10; i++) {
 
@@ -99,16 +88,7 @@ const keyExpansion = (() => {
 
         roundKeys.push([Array.from(word_0), Array.from(word_1), Array.from(word_2), Array.from(word_3)]);
 
-        // console.log(`Round ${i} Key:`);
-        // console.log("W" + (4 * i) + ":", Array.from(word_0));
-        // console.log("W" + (4 * i + 1) + ":", Array.from(word_1));
-        // console.log("W" + (4 * i + 2) + ":", Array.from(word_2));
-        // console.log("W" + (4 * i + 3) + ":", Array.from(word_3));
-        // console.log("-----------------------------");
-
     }
-    console.log(roundKeys)
-
     return roundKeys;
 
 });
@@ -128,44 +108,50 @@ const PKCS_7 = (() => {
         byteArray.push(paddingLength);
     }
 
-    // return byteArray;
+    return byteArray;
 
-    return [
-        0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d,
-        0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34
-    ];
+    // return [
+    //     0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d,
+    //     0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34
+    // ];
 });
 
-
-//-----------Encryption---------------
-
-
-//Substitution Bytes
-const Sub_Bytes = ((block) => {
-    for (let i = 0; i < block.length; i++) {
-        block[i] = SBOX[block[i]];
-    }
-    return block;
-});
-
-//Shift Rows
-const Shift_rows = ((block) => {
-
-    let matrix =
-        [[block[0], block[4], block[8], block[12]],
-        [block[1], block[5], block[9], block[13]],
-        [block[2], block[6], block[10], block[14]],
-        [block[3], block[7], block[11], block[15]]
-        ];
-
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < i; j++) {
-            matrix[i].push(matrix[i].shift());
+const convertTo2D = ((block) => {
+    let matrix = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+    for (let c = 0; c < 4; c++) {
+        for (let r = 0; r < 4; r++) {
+            matrix[r][c] = block[c * 4 + r];
         }
     }
     return matrix;
 });
 
+//Substitution Bytes
+const Sub_Bytes = ((matrix) => {
+    let newMatrix = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+    for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+            newMatrix[r][c] = SBOX[matrix[r][c]];
+        }
+    }
+    return newMatrix;
+});
+
+//Shift Rows
+const Shift_rows = ((matrix) => {
+    let newMatrix = [
+        [...matrix[0]],
+        [...matrix[1]],
+        [...matrix[2]],
+        [...matrix[3]]
+    ];
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < i; j++) {
+            newMatrix[i].push(newMatrix[i].shift());
+        }
+    }
+    return newMatrix;
+});
 
 //Mix columns
 const mul02 = ((b) => {
@@ -190,13 +176,6 @@ const mixSingleColumn = ((col) => {
 });
 
 const Mix_Columns = ((State_Matrix) => {
-    const constant_Matrix = [
-        [2, 3, 1, 1],
-        [1, 2, 3, 1],
-        [1, 1, 2, 3],
-        [3, 1, 1, 2]
-    ];
-
     let new_Matrix = [
         [0, 0, 0, 0],
         [0, 0, 0, 0],
@@ -226,7 +205,6 @@ const add_Round_Keys = ((State_Matrix, keys) => {
         [0, 0, 0, 0]
     ];
 
-
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
             new_Matrix[j][i] = State_Matrix[j][i] ^ keys[i][j];
@@ -237,7 +215,6 @@ const add_Round_Keys = ((State_Matrix, keys) => {
 
 
 const encrypt_block = ((plainblock, roundKeys) => {
-
     let currentBlock = plainblock;
     currentBlock = add_Round_Keys(currentBlock, roundKeys[0]);
 
@@ -273,9 +250,11 @@ const AES = (() => {
     let ciphertext = [];
 
     for (let i = 0; i < plaintext.length; i += 16) {
-
+        
         currentBlock = plaintext.slice(i, i + 16);
-        let encrypted_block = encrypt_block(currentBlock, keys);
+        let matrixBlock = convertTo2D(currentBlock);
+
+        let encrypted_block = encrypt_block(matrixBlock, keys);
 
         let flatBlock = flattenMatrix(encrypted_block);
         ciphertext.push(...flatBlock);
