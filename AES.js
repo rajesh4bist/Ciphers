@@ -49,8 +49,7 @@ const gFunction = ((word, round) => {
 
     return temp;
 
-})
-
+});
 
 //Key expansion for AES
 
@@ -106,13 +105,13 @@ const keyExpansion = (() => {
         // console.log("W" + (4 * i + 2) + ":", Array.from(word_2));
         // console.log("W" + (4 * i + 3) + ":", Array.from(word_3));
         // console.log("-----------------------------");
+
     }
+    console.log(roundKeys)
 
     return roundKeys;
 
 });
-
-keyExpansion();
 
 //Padding
 const PKCS_7 = (() => {
@@ -122,20 +121,21 @@ const PKCS_7 = (() => {
     const encoded_Bytes = encoder.encode(plaintext);
 
     const byteArray = Array.from(encoded_Bytes);
-    const blockSize = 16
+    const blockSize = 16;
     const paddingLength = blockSize - (byteArray.length % blockSize);
 
     for (let i = 0; i < paddingLength; i++) {
         byteArray.push(paddingLength);
     }
 
-    // console.log(byteArray);
+    // return byteArray;
 
-    return byteArray;
-
+    return [
+        0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d,
+        0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34
+    ];
 });
 
-PKCS_7();
 
 //-----------Encryption---------------
 
@@ -216,25 +216,70 @@ const Mix_Columns = ((State_Matrix) => {
     return new_Matrix;
 });
 
+//Adding Round Keys
+const add_Round_Keys = ((State_Matrix, keys) => {
 
+    let new_Matrix = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]
+    ];
+
+
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            new_Matrix[j][i] = State_Matrix[j][i] ^ keys[i][j];
+        }
+    }
+    return new_Matrix;
+});
+
+
+const encrypt_block = ((plainblock, roundKeys) => {
+
+    let currentBlock = plainblock;
+    currentBlock = add_Round_Keys(currentBlock, roundKeys[0]);
+
+    for (let i = 1; i <= 9; i++) {
+        currentBlock = Sub_Bytes(currentBlock);
+        currentBlock = Shift_rows(currentBlock);
+        currentBlock = Mix_Columns(currentBlock);
+        currentBlock = add_Round_Keys(currentBlock, roundKeys[i]);
+    }
+    //10th round
+    currentBlock = Sub_Bytes(currentBlock);
+    currentBlock = Shift_rows(currentBlock);
+    currentBlock = add_Round_Keys(currentBlock, roundKeys[10]);
+
+    return currentBlock;
+});
+
+const flattenMatrix = ((matrix) => {
+    let flat = [];
+    for (let c = 0; c < 4; c++) {
+        for (let r = 0; r < 4; r++) {
+            flat.push(matrix[r][c]);
+        }
+    }
+    return flat;
+});
 
 const AES = (() => {
     const plaintext = PKCS_7();
     let currentBlock;
 
-    //four transformations
+    let keys = keyExpansion();
+    let ciphertext = [];
+
     for (let i = 0; i < plaintext.length; i += 16) {
 
         currentBlock = plaintext.slice(i, i + 16);
+        let encrypted_block = encrypt_block(currentBlock, keys);
 
-        currentBlock = Sub_Bytes(currentBlock);
-        console.log(currentBlock);
-
-        currentBlock = Shift_rows(currentBlock);
-        console.log(currentBlock);
-
-        currentBlock = Mix_Columns(currentBlock);
-        console.log(currentBlock);
+        let flatBlock = flattenMatrix(encrypted_block);
+        ciphertext.push(...flatBlock);
+        console.log("Final Encrypted Block:", ciphertext);
     }
 });
 
