@@ -4,37 +4,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elgamal encryption</title>
+    <title>Elgamal Encryption</title>
 
-    <script src="Elgamal.js"></script>
+    <script src="Elgamal.js" defer></script>
 
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: antiquewhite;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
+            /* Aligns content toward the top vertically */
+            padding: 40px 20px;
         }
 
         #maindiv {
-            position: relative;
-            width: 400px;
-            height: 400px;
+            width: 100%;
+            max-width: 450px;
+            /* Responsive constraints */
+        }
+
+        #form {
+            background-color: rgba(127, 146, 255, 0.25);
+            backdrop-filter: blur(4px);
+            /* Smooth modern touch */
+            border: 1px solid rgba(127, 146, 255, 0.4);
+            border-radius: 16px;
+            /* Smooth fixed corners instead of % */
+            padding: 30px;
             display: flex;
-            justify-content: center;
-            padding-top: 70px;
-            background-color: rgba(127, 146, 255, 0.499);
-            border-radius: 10%;
-            margin-top: 5%;
+            flex-direction: column;
+            gap: 15px;
+            /* Clean, consistent spacing between elements */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95rem;
+            margin-bottom: -5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #7f92ff;
+        }
+
+        input[type="button"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #6375f3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 5px;
+        }
+
+        input[type="button"].encryptbtn,
+        #encryptbtn:hover {
+            background-color: #4b5ee2;
+        }
+
+        input[type="button"].decrypt-btn,
+        #decryptbtn {
+            background-color: #e05a5a;
+        }
+
+        input[type="button"].decrypt-btn:hover,
+        #decryptbtn:hover {
+            background-color: #d13f3f;
+        }
+
+
+        /* Container for your JavaScript output */
+        #output-container {
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            word-break: break-all;
+            /* Prevents long crypto strings from breaking layout */
+        }
+
+        .output-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .output-text {
+            font-family: monospace;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #222;
+        }
+
+        #decrypt-output-container {
+            display: none;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 
 <body>
     <div id="maindiv">
-        <form action="" id="form1">
-            <label for="inputbox">Enter Plaintext: </label>
-            <input type="text" id="inputbox">
+        <form action="" id="form">
+            <label for="inputbox">Enter Plaintext:</label>
+            <input type="text" id="inputbox" placeholder="Type something to encrypt...">
+
+            <input type="button" value="Encrypt" id="encryptbtn">
+
+            <div id="output-container" style="display: none;">
+                <div class="output-title">Ciphertext:</div>
+                <div id="ciphertext" class="output-text"></div>
+            </div>
+            <!-- Decryption Output Container (Initially Hidden) -->
+            <div id="decrypt-output-container">
+                <div class="output-title">Decrypted Plaintext:</div>
+                <div id="decryptedtext" class="output-text"></div>
+            </div>
         </form>
     </div>
 
