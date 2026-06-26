@@ -22,28 +22,23 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            /* Aligns content toward the top vertically */
             padding: 40px 20px;
         }
 
         #maindiv {
             width: 100%;
             max-width: 450px;
-            /* Responsive constraints */
         }
 
         #form {
             background-color: rgba(127, 146, 255, 0.25);
             backdrop-filter: blur(4px);
-            /* Smooth modern touch */
             border: 1px solid rgba(127, 146, 255, 0.4);
             border-radius: 16px;
-            /* Smooth fixed corners instead of % */
             padding: 30px;
             display: flex;
             flex-direction: column;
             gap: 15px;
-            /* Clean, consistent spacing between elements */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
@@ -98,13 +93,11 @@
         }
 
 
-        /* Container for your JavaScript output */
         #output-container {
             margin-top: 10px;
             padding-top: 15px;
             border-top: 1px solid rgba(0, 0, 0, 0.1);
             word-break: break-all;
-            /* Prevents long crypto strings from breaking layout */
         }
 
         .output-title {
@@ -144,7 +137,6 @@
                 <div class="output-title">Ciphertext:</div>
                 <div id="ciphertext" class="output-text"></div>
             </div>
-            <!-- Decryption Output Container (Initially Hidden) -->
             <div id="decrypt-output-container">
                 <div class="output-title">Decrypted Plaintext:</div>
                 <div id="decryptedtext" class="output-text"></div>
