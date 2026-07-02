@@ -96,7 +96,7 @@ const keyExpansion = (() => {
 //Padding
 const PKCS_7 = (() => {
 
-    let plaintext = "hello world";
+    let plaintext = "This is an implementation of AES algorithm";
     const encoder = new TextEncoder();
     const encoded_Bytes = encoder.encode(plaintext);
 
@@ -109,6 +109,7 @@ const PKCS_7 = (() => {
     }
 
     return byteArray;
+    // return [0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255];
 
     // return [
     //     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Block 1
@@ -155,11 +156,13 @@ const Shift_rows = ((matrix) => {
 });
 
 //Mix columns
-const mul02 = ((b) => {
-    b = b & 0xFF;
-    let shifted = (b << 1) & 0xFF;
-    return (b & 0x80) ? (shifted ^ 0x1B) : shifted;
-});
+const mul02 = (b) => {
+    let res = b << 1;
+    if (b & 0x80) { // If the 8th bit is set, apply the AES irreducible polynomial
+        res ^= 0x11b;
+    }
+    return res & 0xFF; // <-- CRITICAL: Forces it to stay an 8-bit byte
+};
 
 const mul03 = ((b) => {
     return mul02(b) ^ b;
@@ -274,12 +277,14 @@ const AES = (() => {
         previousBlock = [...flatBlock];
         ciphertext.push(...flatBlock);
     }
-    // console.log("Final Encrypted Block:", ciphertext);
+    console.log("Final Encrypted Block:", ciphertext);
     return ciphertext;
 });
 
 
 AES();
+
+
 
 //Decryption
 const inv_SBOX = [
@@ -363,30 +368,67 @@ const inv_mix_columns = ((State_Matrix) => {
 });
 
 
-const decrypt_block = (() => {
+const decrypt_block = ((ciphertext, IV) => {
 
     let keys = keyExpansion();
     let flat_ciphertext = AES();
-    let ciphertext = convertTo2D(flat_ciphertext);
-    let currentBlock = ciphertext;
+    let previousBlock = IV.slice();
+    let currentBlock;
+    let plaintext = [];
+    let chainedBlock = [];
 
-    //round 1 of decryption
-    currentBlock = add_Round_Keys(currentBlock, keys[keys.length - 1]);
+    for (let i = 0; i < ciphertext.length; i += 16) {
 
-    //round 2 to 9
-    for (let i = keys.length - 2; i > 0; i--) {
+        let Block = ciphertext.slice(i, i + 16);
+
+        let currentBlock = convertTo2D(Block);
+
+        //round 1 of decryption
+        currentBlock = add_Round_Keys(currentBlock, keys[keys.length - 1]);
+
+        //round 2 to 9
+        for (let i = 9; i > 0; i--) {
+            currentBlock = inv_shift_rows(currentBlock);
+            currentBlock = inv_sub_bytes(currentBlock);
+            currentBlock = add_Round_Keys(currentBlock, keys[i]);
+            currentBlock = inv_mix_columns(currentBlock);
+        }
+
+        //Final Round
         currentBlock = inv_shift_rows(currentBlock);
         currentBlock = inv_sub_bytes(currentBlock);
-        currentBlock = add_Round_Keys(currentBlock, keys[i]);
-        currentBlock = inv_mix_columns(currentBlock);
-    }
-    //Final Round
-    currentBlock = inv_shift_rows(currentBlock);
-    currentBlock = inv_sub_bytes(currentBlock);
-    currentBlock = add_Round_Keys(currentBlock, keys[0]);
+        currentBlock = add_Round_Keys(currentBlock, keys[0]);
 
-    currentBlock = flattenMatrix(currentBlock);
-    console.log(currentBlock)
+        currentBlock = flattenMatrix(currentBlock);
+        for (let j = 0; j < 16; j++) {
+            chainedBlock.push(currentBlock[j] ^ previousBlock[j]);
+        }
+        previousBlock = Block;
+    }
+
+    return chainedBlock;
+
 });
-decrypt_block();
+
+
+
+const bytesToPlaintext = (byteArray) => {
+
+    const paddingLength = byteArray[byteArray.length - 1];
+
+    let cleanBytes = byteArray;
+    if (paddingLength > 0 && paddingLength <= 16) {
+        cleanBytes = byteArray.slice(0, byteArray.length - paddingLength);
+    }
+
+    const decoder = new TextDecoder('utf-8');
+    return decoder.decode(new Uint8Array(cleanBytes));
+};
+
+let ciphertext = AES();
+let IV = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f];
+let output = decrypt_block(ciphertext, IV);
+let plaintext = bytesToPlaintext(output);
+console.log(plaintext);
+
 
