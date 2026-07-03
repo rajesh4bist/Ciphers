@@ -93,10 +93,15 @@ const keyExpansion = (() => {
 
 });
 
+let text;
+
 //Padding
 const PKCS_7 = (() => {
 
-    let plaintext = "This is an implementation of AES algorithm";
+    // let plaintext = "Hello";
+
+    let plaintext = text;
+
     const encoder = new TextEncoder();
     const encoded_Bytes = encoder.encode(plaintext);
 
@@ -109,13 +114,6 @@ const PKCS_7 = (() => {
     }
 
     return byteArray;
-    // return [0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255];
-
-    // return [
-    //     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Block 1
-    //     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  // Block 2
-    // ];
-
 });
 
 const convertTo2D = ((block) => {
@@ -158,10 +156,10 @@ const Shift_rows = ((matrix) => {
 //Mix columns
 const mul02 = (b) => {
     let res = b << 1;
-    if (b & 0x80) { // If the 8th bit is set, apply the AES irreducible polynomial
+    if (b & 0x80) {
         res ^= 0x11b;
     }
-    return res & 0xFF; // <-- CRITICAL: Forces it to stay an 8-bit byte
+    return res & 0xFF;
 };
 
 const mul03 = ((b) => {
@@ -282,8 +280,7 @@ const AES = (() => {
 });
 
 
-AES();
-
+// AES();
 
 
 //Decryption
@@ -425,10 +422,81 @@ const bytesToPlaintext = (byteArray) => {
     return decoder.decode(new Uint8Array(cleanBytes));
 };
 
-let ciphertext = AES();
-let IV = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f];
-let output = decrypt_block(ciphertext, IV);
-let plaintext = bytesToPlaintext(output);
-console.log(plaintext);
+let encrypt_btn = document.getElementById("encryptbtn");
+
+encrypt_btn.addEventListener("click", () => {
+    text = document.getElementById("inputbox").value;
+
+    if (!text) {
+        alert("Please enter plaintext to encrypt!");
+        return;
+    }
+
+
+
+    let ciphertext = AES();
+    let IV = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f];
+    let output = decrypt_block(ciphertext, IV);
+    let plaintext = bytesToPlaintext(output);
+    console.log(plaintext);
+
+    const outputContainer = document.getElementById('output-container');
+    const cipherTextDiv = document.getElementById('ciphertext');
+
+    if (cipherTextDiv) {
+        let displaytext = 'Ciphertext:\n\n'
+        Array.from(ciphertext).forEach((elem, i) => {
+            displaytext += `${elem} \t`
+        })
+        cipherTextDiv.innerText = displaytext;
+        outputContainer.style.display = 'block';
+    }
+    let decryptContainer = document.getElementById('decrypt-output-container');
+    if (decryptContainer) {
+        decryptContainer.style.display = 'none';
+    }
+    // console.log(encrypted_arr);
+    showDecrypt(plaintext);
+
+});
+
+const showDecrypt = ((plaintext) => {
+    if (text.length === 0) {
+        alert("No data to decrypt!");
+        return;
+    }
+
+    let existing = document.getElementById("decryptbtn");
+    if (existing) existing.remove();
+
+    const decryptBtn = document.createElement("input");
+    decryptBtn.type = "button";
+    decryptBtn.value = "Decrypt";
+    decryptBtn.id = "decryptbtn";
+    decryptBtn.classList.add("decrypt-btn");
+
+    const form = document.getElementById("form");
+    form.appendChild(decryptBtn);
+
+    decryptBtn.addEventListener("click", () => {
+        const outputContainer = document.getElementById('output-container');
+        outputContainer.style.display = "none";
+
+        const decryptContainer = document.getElementById('decrypt-output-container');
+        const decryptedDiv = document.getElementById('decryptedtext');
+
+        if (decryptContainer) {
+            form.insertBefore(decryptBtn, decryptContainer);
+        } else {
+            form.appendChild(decryptBtn);
+        }
+
+        if (decryptedDiv && decryptContainer) {
+            decryptedDiv.innerText = plaintext;
+            decryptContainer.style.display = 'block';
+        }
+    });
+});
+
 
 
