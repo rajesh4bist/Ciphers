@@ -1,17 +1,13 @@
-import { useState } from "react"
+import { AES_main } from "../AES/Encryption/AES_main";
 
-export const UI = (() => {
+type UIprops = {
+    takeInputValue: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    outputValue: () => void;
+}
 
-    const [inputValue, setInputValue] = useState('');
+export const UI = (({ takeInputValue, outputValue }: UIprops) => {
 
-    const takeInputValue = ((e: React.ChangeEvent<HTMLInputElement>) => {
-        setInputValue(e.target.value)
-        console.log(inputValue);
-    })
-
-    const outputValue = (() => {
-        console.log(inputValue)
-    })
+    // let let ciphertext = AES_main
 
     return (
         <>
