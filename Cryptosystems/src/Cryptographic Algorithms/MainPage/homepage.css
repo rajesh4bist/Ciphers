@@ -1,0 +1,51 @@
+body {
+    margin: 0;
+    background: #0f172a;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.algorithm-menu {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* flex-direction: column; */
+    gap: 35px;
+}
+
+.menu-item {
+    width: 240px;
+    height: 140px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+
+    backdrop-filter: blur(12px);
+
+    transition: all .35s ease;
+    cursor: pointer;
+}
+
+.menu-item a {
+    text-decoration: none;
+    color: white;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: .35s;
+}
+
+.menu-item:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, .45);
+    border-color: #38bdf8;
+}
+
+.menu-item:hover a {
+    color: #38bdf8;
+}

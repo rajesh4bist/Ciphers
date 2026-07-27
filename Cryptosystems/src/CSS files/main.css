@@ -1,113 +1,109 @@
- * {
-     box-sizing: border-box;
-     margin: 0;
-     padding: 0;
- }
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
 
- body {
-     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-     background-color: antiquewhite;
-     min-height: 100vh;
-     display: flex;
-     justify-content: center;
-     align-items: flex-start;
-     padding: 40px 20px;
- }
+body {
+    margin: 0;
+}
 
- #maindiv {
-     width: 100%;
-     max-width: 450px;
- }
+#maindiv {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0f172a;
+    font-family: "Segoe UI", sans-serif;
+    padding: 20px;
+}
 
- #form {
-     background-color: rgba(127, 146, 255, 0.25);
-     backdrop-filter: blur(4px);
-     border: 1px solid rgba(127, 146, 255, 0.4);
-     border-radius: 16px;
-     padding: 30px;
-     display: flex;
-     flex-direction: column;
-     gap: 15px;
-     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
- }
+#form {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 
- label {
-     font-weight: 600;
-     color: #333;
-     font-size: 0.95rem;
-     margin-bottom: -5px;
- }
+    padding: 40px 32px;
 
- input[type="text"] {
-     width: 100%;
-     padding: 12px;
-     border: 1px solid #ccc;
-     border-radius: 8px;
-     font-size: 1rem;
-     transition: border-color 0.2s;
- }
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    backdrop-filter: blur(12px);
 
- input[type="text"]:focus {
-     outline: none;
-     border-color: #7f92ff;
- }
+    box-shadow: 0 20px 45px rgba(0, 0, 0, .35);
+}
 
- input[type="button"] {
-     width: 100%;
-     padding: 12px;
-     background-color: #6375f3;
-     color: white;
-     border: none;
-     border-radius: 8px;
-     font-size: 1rem;
-     font-weight: 600;
-     cursor: pointer;
-     transition: background-color 0.2s;
-     margin-top: 5px;
- }
+#form label {
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
 
- input[type="button"].encryptbtn,
- #encryptbtn:hover {
-     background-color: #4b5ee2;
- }
+#inputbox {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.04);
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: all .3s ease;
+}
 
- input[type="button"].decrypt-btn,
- #decryptbtn {
-     background-color: #e05a5a;
- }
+#inputbox::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
 
- input[type="button"].decrypt-btn:hover,
- #decryptbtn:hover {
-     background-color: #d13f3f;
- }
+#inputbox:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+}
 
+#encryptbtn {
+    padding: 12px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    background: rgba(56, 189, 248, 0.12);
+    color: #38bdf8;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all .35s ease;
+}
 
- #output-container {
-     margin-top: 10px;
-     padding-top: 15px;
-     border-top: 1px solid rgba(0, 0, 0, 0.1);
-     word-break: break-all;
- }
+#encryptbtn:hover {
+    background: #38bdf8;
+    color: #0f172a;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(56, 189, 248, 0.35);
+}
 
- .output-title {
-     font-weight: 600;
-     font-size: 0.9rem;
-     color: #555;
-     margin-bottom: 5px;
- }
+#output-container,
+#decrypt-output-container {
+    padding: 16px 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
 
- .output-text {
-     font-family: monospace;
-     background: rgba(255, 255, 255, 0.7);
-     padding: 10px;
-     border-radius: 6px;
-     font-size: 0.95rem;
-     color: #222;
- }
+.output-title {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+}
 
- #decrypt-output-container {
-     display: none;
-     margin-top: 20px;
-     padding-top: 15px;
-     border-top: 1px solid rgba(0, 0, 0, 0.1);
- }
+.output-text {
+    color: #38bdf8;
+    font-size: 1.05rem;
+    font-weight: 500;
+    word-break: break-all;
+    font-family: "Consolas", monospace;
+}
