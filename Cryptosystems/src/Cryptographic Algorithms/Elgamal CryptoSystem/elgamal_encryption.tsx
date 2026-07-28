@@ -11,7 +11,7 @@ const charToNum = ((c: string) => {
     return c.charCodeAt(0);
 });
 
-const numToChar = ((n: bigint) => {
+export const numToChar = ((n: bigint) => {
     return String.fromCharCode(Number(n));
 });
 function randomBigInt() {
