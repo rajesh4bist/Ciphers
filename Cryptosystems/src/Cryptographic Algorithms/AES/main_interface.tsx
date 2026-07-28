@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 
 type UIprops = {
     takeInputValue: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -10,12 +9,6 @@ type UIprops = {
 }
 
 export const UI = (({ takeInputValue, outputValue, ciphertext, showValue, decyptBtnEvent, PlainText }: UIprops) => {
-
-
-
-    useEffect(() => {
-        console.log(ciphertext);
-    }, [ciphertext]);
 
     return (
         <>
