@@ -1,15 +1,15 @@
-export const EEA = ((e: number, phi_n: number) => {
+export const EEA = ((e: bigint, phi_n: bigint): [bigint, bigint] => {
 
-    let x1 = 1, y1 = 0;
-    let x2 = 0, y2 = 1;;
+    let x1 = 1n, y1 = 0n;
+    let x2 = 0n, y2 = 1n;
 
-    if (e == 0) {
-        return [phi_n, 1, 0];
+    if (e == 0n) {
+        return [phi_n, y1];
     }
 
-    while (e != 0) {
+    while (e != 0n) {
         let r = phi_n % e;
-        let q = Math.floor(phi_n / e);
+        let q = (phi_n / e);
 
         phi_n = e;
         e = r;
@@ -26,11 +26,13 @@ export const EEA = ((e: number, phi_n: number) => {
     return [phi_n, y1];
 });
 
-export const calc_d = ((e: number, phi: number) => {
+
+//calculating d
+export const calc_d = ((e: bigint, phi: bigint): bigint => {
 
     let [gcd, y] = EEA(e, phi);
 
-    if (gcd !== 1) {
+    if (gcd !== 1n) {
         throw new Error("No inverse");
     }
 

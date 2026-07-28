@@ -1,9 +1,11 @@
+import { calc_d } from "./EEA";
+
 
 export const charToNum = ((c: string) => {
     return BigInt(c.toLowerCase().charCodeAt(0));
 });
 
-const numToChar = ((n: number) => {
+export const numToChar = ((n: number) => {
     return String.fromCharCode(n);
 });
 console.log(numToChar(66));
@@ -20,29 +22,55 @@ export const modPow = (base: bigint, exp: bigint, mod: bigint) => {
         base = (base * base) % mod;
         exp = exp / 2n;
     }
-    return Number(res);
+    return BigInt(res);
 };
 
+
+
 type EncryptionProps = {
-    Value: string;
+    inputValue: string;
 }
 
-export const Encryption = (({ Value }: EncryptionProps) => {
 
-    const p = 197;
-    const q = 199;
-    const n = BigInt(p * q);
+const p = 197n;
+const q = 199n;
+const n = BigInt(p * q);
+let e = 53n;
 
-    let e = BigInt(53);
+const phi_n = (p - 1n) * (q - 1n);
 
-    let encrypted_arr = [];
+const d = calc_d(e, phi_n);
 
-    for (let i = 0; i < Value.length; i++) {
+let encrypted_arr: bigint[] = [];
 
-        let num: bigint = charToNum(Value[i]);
-        let C = modPow(num, e, n);
+export const Encryption = (({ inputValue }: EncryptionProps) => {
+
+    const result: bigint[] = [];
+
+    for (let i = 0; i < inputValue.length; i++) {
+
+        let num: bigint = charToNum(inputValue[i]);
+        let C: bigint = modPow(num, e, n);
+
         encrypted_arr.push(C);
+        result.push(C);
     }
     console.log(encrypted_arr);
-    return encrypted_arr;
+    return result;
+})
+
+let decrypted_arr = [];
+
+export const Decryption = (() => {
+    for (let i = 0; i < encrypted_arr.length; i++) {
+        let num: bigint = encrypted_arr[i];
+
+        let M = modPow(num, d, n);
+
+        decrypted_arr.push(numToChar(Number(M)));
+    }
+    // console.log(encrypted_arr);
+    // console.log("Decrypted text:", decrypted_arr.join(""));
+    return decrypted_arr.join("");
+    // console.log(decrypted_arr)
 })

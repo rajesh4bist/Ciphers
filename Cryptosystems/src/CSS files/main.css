@@ -91,7 +91,6 @@ input[type="button"]:hover {
     border-radius: 12px;
 }
 
-
 .output-title {
     color: rgba(255, 255, 255, 0.5);
     font-size: 0.8rem;
@@ -107,4 +106,8 @@ input[type="button"]:hover {
     font-weight: 500;
     word-break: break-all;
     font-family: "Consolas", monospace;
+}
+
+.empty-block {
+    display: none;
 }
