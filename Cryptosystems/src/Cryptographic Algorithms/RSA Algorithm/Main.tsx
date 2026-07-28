@@ -13,7 +13,6 @@ export const Main = (() => {
 
     const [showPlainText, setShowPlainText] = useState('');
 
-    const [showDecryptText, setshowDecryptContainer] = useState(false)
 
     const setValue = ((e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value);
@@ -28,7 +27,6 @@ export const Main = (() => {
     const HandleDecrypt = (() => {
         let plaintext = Decryption();
         setShowPlainText(plaintext);
-        setshowDecryptContainer(true);
     })
 
     return (
@@ -39,7 +37,6 @@ export const Main = (() => {
                 showDecrypt={showDecrypt}
                 HandleDecrypt={HandleDecrypt}
                 PlainText={showPlainText}
-                showDecryptText={showDecryptText}
             />
         </>
     )

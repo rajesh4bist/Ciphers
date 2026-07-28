@@ -5,10 +5,9 @@ type UIProps = {
     showDecrypt: Boolean;
     HandleDecrypt: () => void;
     PlainText: string;
-    showDecryptText: Boolean;
 }
 
-export const UI = (({ setValue, cipherText, encryptBtnHandle, showDecrypt, HandleDecrypt, PlainText, showDecryptText }: UIProps) => {
+export const UI = (({ setValue, cipherText, encryptBtnHandle, showDecrypt, HandleDecrypt, PlainText }: UIProps) => {
 
     return (
         <>
