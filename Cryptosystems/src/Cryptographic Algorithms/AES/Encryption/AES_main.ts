@@ -4,6 +4,7 @@ import { convertTo2D, flattenMatrix } from "./Helpers";
 import { encrypt_block } from "./Encrypt_block";
 
 export const AES_main = ((text: string) => {
+
     const plaintext = PKCS_7(text);
     let currentBlock;
 

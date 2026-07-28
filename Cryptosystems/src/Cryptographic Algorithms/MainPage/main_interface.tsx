@@ -1,13 +1,21 @@
-import { AES_main } from "../AES/Encryption/AES_main";
+import { useEffect } from "react";
 
 type UIprops = {
     takeInputValue: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    outputValue: () => void;
+    outputValue: (e: React.MouseEvent<HTMLInputElement>) => void;
+    ciphertext: string;
+    showValue: boolean;
+    decyptBtnEvent: () => void;
+    PlainText: string;
 }
 
-export const UI = (({ takeInputValue, outputValue }: UIprops) => {
+export const UI = (({ takeInputValue, outputValue, ciphertext, showValue, decyptBtnEvent, PlainText }: UIprops) => {
 
-    // let let ciphertext = AES_main
+
+
+    useEffect(() => {
+        console.log(ciphertext);
+    }, [ciphertext]);
 
     return (
         <>
@@ -18,13 +26,16 @@ export const UI = (({ takeInputValue, outputValue }: UIprops) => {
 
                     <input type="button" value="Encrypt" id="encryptbtn" onClick={outputValue} />
 
-                    <div id="output-container" style={{ display: "none" }}>
+                    <div id="output-container" style={{ display: showValue ? "block" : "none" }}>
                         <div className="output-title">Ciphertext:</div>
-                        <div id="ciphertext" className="output-text"></div>
+                        <div id="ciphertext" className="output-text">{ciphertext}</div>
                     </div>
-                    <div id="decrypt-output-container">
+                    {showValue && (
+                        <input type="button" id="decryptbtn" className="decrypt-btn" value="Decrypt" onClick={decyptBtnEvent} />
+                    )}
+                    <div id="decrypt-output-container" style={{ display: showValue ? "block" : "none" }}>
                         <div className="output-title">Decrypted Plaintext:</div>
-                        <div id="decryptedtext" className="output-text"></div>
+                        <div id="decryptedtext" className="output-text">{PlainText}</div>
                     </div>
                 </form>
             </div>
