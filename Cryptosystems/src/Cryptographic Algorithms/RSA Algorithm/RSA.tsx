@@ -2,6 +2,10 @@ import { Main } from "./Main"
 
 export const RSA = (() => {
     return (
-        <Main />
+        <>
+            <title>RSA</title>
+            <Main />
+        </>
+
     )
 })

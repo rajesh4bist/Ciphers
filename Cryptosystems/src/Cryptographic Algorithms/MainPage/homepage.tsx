@@ -1,21 +1,23 @@
+import './homepage.css';
+
 export const HomePage = (() => {
+
     return (
-        <div className="algorithm-menu">
-            <div className="AES menu-item">
-                <h1>
+        <>
+            <title>Cryptographic Algorithms</title>
+            <h1 id="select-algorithm">Select</h1>
+            <div className="algorithm-menu">
+                <div className="AES menu-item">
                     <a href="AES">AES</a>
-                </h1>
-            </div>
-            <div className="RSA menu-item">
-                <h1>
+                </div>
+                <div className="RSA menu-item">
                     <a href="RSA">RSA</a>
-                </h1>
-            </div>
-            <div className="AES menu-item">
-                <h1>
+                </div>
+                <div className="Elgamal menu-item">
                     <a href="elgamal"> Elagamal</a>
-                </h1>
+                </div>
             </div>
-        </div>
+        </>
+
     )
 })

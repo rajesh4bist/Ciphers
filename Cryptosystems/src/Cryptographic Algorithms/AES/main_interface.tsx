@@ -13,6 +13,7 @@ export const UI = (({ takeInputValue, outputValue, ciphertext, showValue, decypt
     return (
         <>
             <div id="maindiv">
+                <h1>AES</h1>
                 <form action="" id="form">
                     <label htmlFor="inputbox">Enter Plaintext:</label>
                     <input type="text" id="inputbox" placeholder="Type something to encrypt..." onChange={takeInputValue} />

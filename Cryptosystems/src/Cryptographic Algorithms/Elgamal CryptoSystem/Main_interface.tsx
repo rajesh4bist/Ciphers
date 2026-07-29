@@ -11,7 +11,9 @@ export const UI = (({ handleChange, encryptText, ciphertext, showDecrypt, decryp
 
     return (
         <>
+        
             <div id="maindiv">
+                <h1>Elgamal</h1>
                 <form action="" id="form">
                     <label htmlFor="inputbox">Enter Plaintext:</label>
                     <input type="text" id="inputbox" placeholder="Type something to encrypt..." onChange={handleChange} />

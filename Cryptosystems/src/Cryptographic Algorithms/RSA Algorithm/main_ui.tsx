@@ -12,6 +12,7 @@ export const UI = (({ setValue, cipherText, encryptBtnHandle, showDecrypt, Handl
     return (
         <>
             <div id="maindiv">
+            <h1>RSA</h1>
                 <form action="" id="form">
                     <label htmlFor="inputbox">Enter Plaintext:</label>
                     <input type="text" id="inputbox" placeholder="Type something to encrypt..." onChange={setValue} />

@@ -2,6 +2,9 @@ import { Main } from "./Main"
 
 export const AES = (() => {
     return (
-        < Main />
+        <>
+            <title>AES</title>
+            < Main />
+        </>
     )
 })

@@ -25,7 +25,6 @@ export const Main = (() => {
         setCipherText(encryption(inputValue));
         setShowDecrypt(true);
     })
-    console.log(ciphertext);
 
     const decryptText = (() => {
         setPlainText(decryption(ciphertext));
