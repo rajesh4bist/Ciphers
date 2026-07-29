@@ -1,4 +1,5 @@
 import './homepage.css';
+import { Link } from 'react-router';
 
 export const HomePage = (() => {
 
@@ -7,15 +8,30 @@ export const HomePage = (() => {
             <title>Cryptographic Algorithms</title>
             <h1 id="select-algorithm">Select</h1>
             <div className="algorithm-menu">
-                <div className="AES menu-item">
-                    <a href="AES">AES</a>
-                </div>
-                <div className="RSA menu-item">
-                    <a href="RSA">RSA</a>
+                <Link to="/AES">
+                    <div className="AES menu-item">
+                        AES
+                    </div>
+                </Link>
+
+                <Link to="/RSA">
+                    <div className="RSA menu-item">
+                        RSA
+                    </div>
+                </Link>
+
+                <Link to="/Elgamal">
+                    <div className="Elgamal menu-item">
+                        Elgamal
+                    </div>
+                </Link>
+
+                {/* <div className="RSA menu-item">
+                    <Link to="/RSA">RSA</Link>
                 </div>
                 <div className="Elgamal menu-item">
-                    <a href="elgamal"> Elagamal</a>
-                </div>
+                    <Link to="/Elgamal"> Elagamal</Link>
+                </div> */}
             </div>
         </>
 
